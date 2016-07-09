@@ -6,13 +6,13 @@ export default class App extends Component {
     super(props);
 
     this.state = {
-      dragging: false,
       currentLine: [],
       points: [],
       lines: []
     };
 
-    this.handleMouseClick = this.handleMouseClick.bind(this);
+    this.holdActive = false;
+    this.holdStarter = null;
     this.handleMouseDown = this.handleMouseDown.bind(this);
     this.handleMouseUp = this.handleMouseUp.bind(this);
     this.handleMouseMove = this.handleMouseMove.bind(this);
@@ -28,30 +28,40 @@ export default class App extends Component {
     this.paint(context);
   }
 
-  handleMouseClick(e) {
-    const mouseX = e.pageX - this._canvas.offsetLeft;
-    const mouseY = e.pageY - this._canvas.offsetTop;
-
-    this.addPoint(mouseX, mouseY);
-  }
-
   handleMouseDown(e) {
-    this.setState({ dragging: true });
+    // Do not take any immediate action - just set the holdStarter
+    // to wait for the predetermined delay, and then begin a hold
+    this.holdStarter = setTimeout( () => {
+        this.holdStarter = null;
+        this.holdActive = true;
+    }, 200);
   }
 
   handleMouseUp(e) {
-    this.setState({
-      dragging: false,
-      lines: this.state.lines.concat([this.state.currentLine]),
-      currentLine: []
-    });
+    // If the mouse is released immediately (i.e., a click), before the
+    // holdStarter runs, then cancel the holdStarter and do the click
+    if (this.holdStarter) {
+      clearTimeout(this.holdStarter);
+      const mouseX = e.pageX - this._canvas.offsetLeft;
+      const mouseY = e.pageY - this._canvas.offsetTop;
+
+      this.addPoint(mouseX, mouseY);
+    }
+    // Otherwise, if the mouse was being held, end the hold
+    else if (this.holdActive) {
+      this.holdActive = false;
+      this.setState({
+        lines: this.state.lines.concat([this.state.currentLine]),
+        currentLine: []
+      });
+    }
   }
 
   handleMouseMove(e) {
     const mouseX = e.pageX - this._canvas.offsetLeft;
     const mouseY = e.pageY - this._canvas.offsetTop;
 
-    if (this.state.dragging) {
+    if (this.holdActive) {
       this.addLineNode(mouseX, mouseY);
     }
   }
@@ -109,8 +119,13 @@ export default class App extends Component {
   }
 
   render() {
+    const canvasStyle = {
+      border: "1px solid #ccc",
+      backgroundColor: "#fafafa"
+    }
+
     return <canvas
-      onClick={this.handleMouseClick}
+      style={canvasStyle}
       onMouseDown={this.handleMouseDown}
       onMouseUp={this.handleMouseUp}
       onMouseMove={this.handleMouseMove}
