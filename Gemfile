@@ -45,3 +45,4 @@ group :test do
 end
 
 gem 'browserify-rails'
+gem 'active_model_serializers', '~> 0.10.0'
