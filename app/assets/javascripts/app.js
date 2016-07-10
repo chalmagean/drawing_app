@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 
-const POINTS_URL = 'http://localhost:3000/api/v1/points.json';
-const LINES_URL = 'http://localhost:3000/api/v1/lines.json';
+const API_URL = 'http://localhost:3000/api/v1';
+const POINTS_PATH = '/points.json';
+const LINES_PATH = '/lines.json';
 
 export default class App extends Component {
   constructor(props) {
@@ -53,6 +54,7 @@ export default class App extends Component {
     // holdStarter runs, then cancel the holdStarter and do the click
     if (this.holdStarter) {
       clearTimeout(this.holdStarter);
+
       const mouseX = e.pageX - this._canvas.offsetLeft;
       const mouseY = e.pageY - this._canvas.offsetTop;
 
@@ -130,7 +132,9 @@ export default class App extends Component {
   }
 
   fetchPoints() {
-    return $.get(POINTS_URL, (data) => {
+    const url = `${API_URL}${POINTS_PATH}`;
+
+    return $.get(url, (data) => {
       const points = $.map(data, (point) => {
         return [[point.x, point.y]];
       });
@@ -139,8 +143,19 @@ export default class App extends Component {
     });
   }
 
+  saveLine(lineNodes) {
+    const url = `${API_URL}${LINES_PATH}`;
+    console.log('lineNodes', lineNodes);
+    $.post(url, { line: { nodes: lineNodes } })
+      .done(data => {
+        console.log('data', data);
+      });
+  }
+
   fetchLines() {
-    return $.get(LINES_URL, (data) => {
+    const url = `${API_URL}${LINES_PATH}`;
+
+    return $.get(url, (data) => {
       const lines = data.map(line => {
         return line.nodes.map(node => {
           return [node[0], node[1]];

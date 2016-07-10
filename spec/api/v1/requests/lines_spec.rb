@@ -8,7 +8,7 @@ RSpec.describe 'Lines', type: :request do
         [[4, 4], [5, 5]]
       ])
       serialized_line = LineSerializer.new(line)
-      serialization = ActiveModel::Serializer::Adapter.create(serialized_line)
+      serialization = ActiveModelSerializers::Adapter.create(serialized_line)
 
       get api_v1_lines_path, format: :json
       expect(response.body).to include(serialization.to_json)
