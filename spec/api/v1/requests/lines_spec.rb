@@ -16,6 +16,28 @@ RSpec.describe 'Lines', type: :request do
   end
 
   describe 'POST /' do
-    it 'stores the line'
+    it 'stores the line' do
+      params = { line: { nodes: { "0": [1, 1], "1": [2, 2] } } }
+
+      expect do
+        post api_v1_lines_path, params, format: :json
+      end.to change(Line, :count).by(1)
+
+      last_line = Line.last
+      expect(last_line.nodes).to eq([["1", "1"], ["2", "2"]])
+    end
+
+    context 'when params are off' do
+      it 'resonds with :bad_requests' do
+        params = { line: { foo: 'bar' } }
+
+        expect do
+          post api_v1_lines_path, params, format: :json
+        end.to_not change(Line, :count)
+
+        expect(response.body).to eq('')
+        expect(response.status).to eq(400)
+      end
+    end
   end
 end

@@ -63,6 +63,8 @@ export default class App extends Component {
     // Otherwise, if the mouse was being held, end the hold
     else if (this.holdActive) {
       this.holdActive = false;
+      this.saveLine(this.state.currentLine);
+
       this.setState({
         lines: this.state.lines.concat([this.state.currentLine]),
         currentLine: []
@@ -145,7 +147,7 @@ export default class App extends Component {
 
   saveLine(lineNodes) {
     const url = `${API_URL}${LINES_PATH}`;
-    console.log('lineNodes', lineNodes);
+
     $.post(url, { line: { nodes: lineNodes } })
       .done(data => {
         console.log('data', data);
