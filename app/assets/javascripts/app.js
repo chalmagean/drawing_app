@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 
+const POINTS_URL = 'http://localhost:3000/api/v1/points.json';
+const LINES_URL = 'http://localhost:3000/api/v1/lines.json';
+
 export default class App extends Component {
   constructor(props) {
     super(props);
@@ -19,6 +22,9 @@ export default class App extends Component {
   }
 
   componentDidMount() {
+    this.fetchPoints();
+    this.fetchLines();
+
     const context = this._canvas.getContext('2d');
     this.paint(context);
   }
@@ -116,6 +122,28 @@ export default class App extends Component {
     // TODO: can this be done in an immutable way?
    this.paintPoints(context);
    this.paintLines(context);
+  }
+
+  fetchPoints() {
+    $.get(POINTS_URL, (data) => {
+      const points = $.map(data, (point) => {
+        return [[point.x, point.y]];
+      });
+
+      this.setState({ points })
+    });
+  }
+
+  fetchLines() {
+    $.get(LINES_URL, (data) => {
+      const lines = data.map(line => {
+        return line.nodes.map(node => {
+          return [node[0], node[1]];
+        });
+      });
+
+      this.setState({ lines })
+    });
   }
 
   render() {
