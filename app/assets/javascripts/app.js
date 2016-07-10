@@ -23,8 +23,10 @@ export default class App extends Component {
   }
 
   componentDidMount() {
-    this.loadPointsRequest = this.fetchPoints();
-    this.loadLinesRequest = this.fetchLines();
+    setInterval(() => {
+      this.loadPointsRequest = this.fetchPoints();
+      this.loadLinesRequest = this.fetchLines();
+    }, 500);
 
     const context = this._canvas.getContext('2d');
     this.paint(context);
@@ -148,10 +150,7 @@ export default class App extends Component {
   saveLine(lineNodes) {
     const url = `${API_URL}${LINES_PATH}`;
 
-    $.post(url, { line: { nodes: lineNodes } })
-      .done(data => {
-        console.log('data', data);
-      });
+    $.post(url, { line: { nodes: lineNodes } });
   }
 
   fetchLines() {
