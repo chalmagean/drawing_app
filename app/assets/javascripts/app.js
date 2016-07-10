@@ -22,8 +22,8 @@ export default class App extends Component {
   }
 
   componentDidMount() {
-    this.fetchPoints();
-    this.fetchLines();
+    this.loadPointsRequest = this.fetchPoints();
+    this.loadLinesRequest = this.fetchLines();
 
     const context = this._canvas.getContext('2d');
     this.paint(context);
@@ -32,6 +32,11 @@ export default class App extends Component {
   componentDidUpdate() {
     const context = this._canvas.getContext('2d');
     this.paint(context);
+  }
+
+  componentWillUnmount() {
+    this.loadPointsRequest.abort();
+    this.loadLinesRequest.abort();
   }
 
   handleMouseDown(e) {
@@ -125,7 +130,7 @@ export default class App extends Component {
   }
 
   fetchPoints() {
-    $.get(POINTS_URL, (data) => {
+    return $.get(POINTS_URL, (data) => {
       const points = $.map(data, (point) => {
         return [[point.x, point.y]];
       });
@@ -135,7 +140,7 @@ export default class App extends Component {
   }
 
   fetchLines() {
-    $.get(LINES_URL, (data) => {
+    return $.get(LINES_URL, (data) => {
       const lines = data.map(line => {
         return line.nodes.map(node => {
           return [node[0], node[1]];
