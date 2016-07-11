@@ -30,6 +30,7 @@ The solution is implemented as a ReactJS (front-end) + Rails API backend.
 To start the rails server, change into the project folder and bootstrap the rails application:
 
 ```
+$ git clone git@github.com:chalmagean/drawing_app.git
 $ cd drawing_app
 $ bundle install
 $ rake db:create
