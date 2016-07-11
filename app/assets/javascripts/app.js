@@ -26,7 +26,7 @@ export default class App extends Component {
     setInterval(() => {
       this.loadPointsRequest = this.fetchPoints();
       this.loadLinesRequest = this.fetchLines();
-    }, 500);
+    }, 2000);
 
     const context = this._canvas.getContext('2d');
     this.paint(context);
@@ -178,7 +178,7 @@ export default class App extends Component {
       onMouseDown={this.handleMouseDown}
       onMouseUp={this.handleMouseUp}
       onMouseMove={this.handleMouseMove}
-      width={800}
+      width={600}
       height={600}
       ref={(c) => this._canvas = c} />;
   }
