@@ -85,7 +85,7 @@ export default class App extends Component {
 
   addPoint(x, y) {
     const pointXY = [x, y];
-
+    this.savePoint(pointXY);
     this.setState({ points: this.state.points.concat([pointXY]) });
   }
 
@@ -133,6 +133,12 @@ export default class App extends Component {
     // TODO: can this be done in an immutable way?
    this.paintPoints(context);
    this.paintLines(context);
+  }
+
+  savePoint(point) {
+    const url = `${API_URL}${POINTS_PATH}`;
+
+    $.post(url, { point: { x: point[0], y: point[1] } });
   }
 
   fetchPoints() {
