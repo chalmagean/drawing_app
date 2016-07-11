@@ -99,9 +99,27 @@ export default class App extends Component {
     const points = this.state.points;
 
     points.map(point => {
+      // Choose a random color if the point was added more than once
+      if (this.pointAlreadyExists(point)) {
+        context.fillStyle = this.randomHexColor();
+      }
+
       context.fillRect(point[0], point[1], 4, 4);
+      // Reset point color to black
+      context.fillStyle = "#000000";
     });
   }
+
+  pointAlreadyExists(point) {
+    // Find out how many times point is found inside state
+    const count = this.state.points.filter(storedPoint => {
+      // Poor man's array comparison
+      return point.toString() === storedPoint.toString();
+    }).length
+
+    return count > 1;
+  }
+
 
   paintLines(context) {
     context.strokeStyle = "#df4b26";
@@ -171,6 +189,10 @@ export default class App extends Component {
 
       this.setState({ lines })
     });
+  }
+
+  randomHexColor() {
+    return "#" + ("000000" + Math.random().toString(16).slice(2, 8)).slice(-6);
   }
 
   render() {
